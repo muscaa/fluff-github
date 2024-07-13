@@ -11,12 +11,13 @@ import fluff.json.JSONObject;
 public class GithubFile {
     
     private final Github gh;
-    private final String user;
-    private final String repo;
-    private final String branch;
     
-    private final String name;
-    private final String path;
+    private final String userName;
+    private final String repoName;
+    private final String branchName;
+    private final String filePath;
+    private final String fileName;
+    
     private final String type;
     private final String downloadUrl;
     private final String sha;
@@ -26,19 +27,21 @@ public class GithubFile {
      * Constructs a GithubFile instance from a JSONObject.
      *
      * @param gh the Github client instance
-     * @param user the username or organization name that owns the repository
-     * @param repo the repository name
-     * @param branch the branch name
+     * @param userName the user name that owns the repository
+     * @param repoName the repository name
+     * @param branchName the branch name
      * @param json the JSON object containing file information
      */
-    GithubFile(Github gh, String user, String repo, String branch, JSONObject json) {
+    GithubFile(Github gh, String userName, String repoName, String branchName, JSONObject json) {
         this.gh = gh;
-        this.user = user;
-        this.repo = repo;
-        this.branch = branch;
         
-        this.name = json.getString("name");
-        this.path = json.getString("path");
+        this.userName = userName;
+        this.repoName = repoName;
+        this.branchName = branchName;
+        
+        this.filePath = json.getString("path");
+        this.fileName = json.getString("name");
+        
         this.type = json.getString("type");
         this.downloadUrl = json.getString("download_url");
         this.sha = json.getString("sha");
@@ -57,66 +60,66 @@ public class GithubFile {
     /**
      * Retrieves a specific file within the directory of this file.
      *
-     * @param path the path to the file relative to this file's path
+     * @param subPath the sub path to the file relative to this file's path
      * @return a GithubFile object representing the file, or null if it does not exist
      */
-    public GithubFile file(String path) {
-        return gh.file(user, repo, branch, this.path + "/" + path);
+    public GithubFile file(String subPath) {
+        return gh.file(userName, repoName, branchName, filePath + "/" + subPath);
     }
     
     /**
-     * Retrieves all files within the specified path relative to this file's path.
+     * Retrieves all files within the specified sub path relative to this file's path.
      *
-     * @param path the path to the files relative to this file's path
+     * @param subPath the sub path to the files relative to this file's path
      * @return a list of GithubFile objects representing the files
      */
-    public List<GithubFile> files(String path) {
-        return gh.files(user, repo, branch, this.path + "/" + path);
+    public List<GithubFile> files(String subPath) {
+        return gh.files(userName, repoName, branchName, filePath + "/" + subPath);
     }
     
     /**
-     * Returns the username or organization name that owns the repository.
+     * Returns the name of the user.
      *
-     * @return the username or organization name
+     * @return the user's name
      */
-    public String getUser() {
-        return user;
+    public String getUserName() {
+        return userName;
     }
     
     /**
-     * Returns the repository name.
+     * Returns the name of the repository.
      *
-     * @return the repository name
+     * @return the repository's name
      */
-    public String getRepo() {
-        return repo;
+    public String getRepoName() {
+        return repoName;
     }
     
     /**
-     * Returns the branch name.
+     * Returns the name of the repository branch.
      *
-     * @return the branch name
+     * @return the repository's branch name
      */
-    public String getBranch() {
-        return branch;
+    public String getBranchName() {
+        return branchName;
     }
     
     /**
-     * Returns the file name.
+     * Returns the path of the file.
      *
-     * @return the file name
+     * @return the file's path
      */
-    public String getName() {
-        return name;
+    public String getFilePath() {
+        return filePath;
     }
     
     /**
-     * Returns the file path.
+     * Returns the name of the file.
      *
-     * @return the file path
+     * @return the file's name
      */
-    public String getPath() {
-        return path;
+    public String getFileName() {
+        return fileName;
     }
     
     /**

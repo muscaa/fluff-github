@@ -11,8 +11,9 @@ public class GithubUser {
     
     private final Github gh;
     
+    private final String userName;
+    
     private final long id;
-    private final String login;
     private final String displayName;
     private final String location;
     private final String avatarUrl;
@@ -29,8 +30,9 @@ public class GithubUser {
     GithubUser(Github gh, JSONObject json) {
         this.gh = gh;
         
+        this.userName = json.getString("login");
+        
         this.id = json.getLong("id");
-        this.login = json.getString("login");
         this.displayName = json.getString("name");
         this.location = json.getString("location");
         this.avatarUrl = json.getString("avatar_url");
@@ -42,11 +44,11 @@ public class GithubUser {
     /**
      * Retrieves a specific repository of the user.
      *
-     * @param repo the name of the repository
+     * @param repoName the name of the repository
      * @return a GithubRepository object representing the repository, or null if it does not exist
      */
-    public GithubRepository repository(String repo) {
-        return gh.repository(login, repo);
+    public GithubRepository repository(String repoName) {
+        return gh.repository(userName, repoName);
     }
     
     /**
@@ -55,7 +57,16 @@ public class GithubUser {
      * @return a list of GithubRepository objects representing the user's repositories
      */
     public List<GithubRepository> repositories() {
-        return gh.repositories(login);
+        return gh.repositories(userName);
+    }
+    
+    /**
+     * Returns the name of the user.
+     *
+     * @return the user's name
+     */
+    public String getUserName() {
+        return userName;
     }
     
     /**
@@ -65,15 +76,6 @@ public class GithubUser {
      */
     public long getID() {
         return id;
-    }
-    
-    /**
-     * Returns the login name of the user.
-     *
-     * @return the user's login name
-     */
-    public String getLogin() {
-        return login;
     }
     
     /**

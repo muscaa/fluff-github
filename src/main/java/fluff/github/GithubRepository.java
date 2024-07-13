@@ -11,14 +11,15 @@ public class GithubRepository {
     
     private final Github gh;
     
+    private final String userName;
+    private final String repoName;
+    
     private final long id;
-    private final String name;
     private final String fullName;
     private final String description;
     private final String homepage;
     private final String defaultBranch;
     private final boolean archived;
-    private final GithubUser owner;
     
     /**
      * Constructs a GithubRepository instance from a JSONObject.
@@ -29,24 +30,25 @@ public class GithubRepository {
     GithubRepository(Github gh, JSONObject json) {
         this.gh = gh;
         
+        this.userName = json.getObject("owner").getString("login");
+        this.repoName = json.getString("name");
+        
         this.id = json.getLong("id");
-        this.name = json.getString("name");
         this.fullName = json.getString("full_name");
         this.description = json.getString("description");
         this.homepage = json.getString("homepage");
         this.defaultBranch = json.getString("default_branch");
         this.archived = json.getBoolean("archived");
-        this.owner = new GithubUser(gh, json.getObject("owner"));
     }
     
     /**
      * Retrieves a specific branch of the repository.
      *
-     * @param branch the name of the branch
+     * @param branchName the name of the branch
      * @return a GithubBranch object representing the branch, or null if it does not exist
      */
-    public GithubBranch branch(String branch) {
-        return gh.branch(owner.getLogin(), name, branch);
+    public GithubBranch branch(String branchName) {
+        return gh.branch(userName, repoName, branchName);
     }
     
     /**
@@ -55,7 +57,25 @@ public class GithubRepository {
      * @return a list of GithubBranch objects representing the repository's branches
      */
     public List<GithubBranch> branches() {
-        return gh.branches(owner.getLogin(), name);
+        return gh.branches(userName, repoName);
+    }
+    
+    /**
+     * Returns the name of the user.
+     *
+     * @return the user's name
+     */
+    public String getUserName() {
+        return userName;
+    }
+    
+    /**
+     * Returns the name of the repository.
+     *
+     * @return the repository's name
+     */
+    public String getRepoName() {
+        return repoName;
     }
     
     /**
@@ -65,15 +85,6 @@ public class GithubRepository {
      */
     public long getID() {
         return id;
-    }
-    
-    /**
-     * Returns the name of the repository.
-     *
-     * @return the repository's name
-     */
-    public String getName() {
-        return name;
     }
     
     /**
@@ -119,14 +130,5 @@ public class GithubRepository {
      */
     public boolean isArchived() {
         return archived;
-    }
-    
-    /**
-     * Returns the owner of the repository.
-     *
-     * @return the GithubUser representing the repository's owner
-     */
-    public GithubUser getOwner() {
-        return owner;
     }
 }

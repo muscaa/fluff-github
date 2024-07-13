@@ -47,12 +47,12 @@ public class Github {
     /**
      * Retrieves information about a GitHub user.
      *
-     * @param user the username of the GitHub user
+     * @param userName the username of the GitHub user
      * @return a GithubUser object representing the user, or null if the user does not exist
      */
-    public GithubUser user(String user) {
+    public GithubUser user(String userName) {
         HTTPResponse r = http
-                .GET(Github.API.derive("users/" + user))
+                .GET(Github.API.derive("users/" + userName))
                 .send();
         if (r.getStatus() != HTTPResponseStatus.OK) return null;
         
@@ -65,13 +65,13 @@ public class Github {
     /**
      * Retrieves information about a GitHub repository.
      *
-     * @param user the username of the repository owner
-     * @param repo the name of the repository
+     * @param userName the user name of the repository owner
+     * @param repoName the name of the repository
      * @return a GithubRepository object representing the repository, or null if the repository does not exist
      */
-    public GithubRepository repository(String user, String repo) {
+    public GithubRepository repository(String userName, String repoName) {
         HTTPResponse r = http
-                .GET(Github.API.derive("repos/" + user + "/" + repo))
+                .GET(Github.API.derive("repos/" + userName + "/" + repoName))
                 .send();
         if (r.getStatus() != HTTPResponseStatus.OK) return null;
         
@@ -84,12 +84,12 @@ public class Github {
     /**
      * Retrieves a list of repositories for a GitHub user.
      *
-     * @param user the username of the GitHub user
+     * @param userName the user name of the GitHub user
      * @return a list of GithubRepository objects representing the user's repositories
      */
-    public List<GithubRepository> repositories(String user) {
+    public List<GithubRepository> repositories(String userName) {
         HTTPResponse r = http
-                .GET(Github.API.derive("users/" + user + "/repos"))
+                .GET(Github.API.derive("users/" + userName + "/repos"))
                 .send();
         if (r.getStatus() != HTTPResponseStatus.OK) return null;
         
@@ -106,33 +106,33 @@ public class Github {
     /**
      * Retrieves information about a branch in a GitHub repository.
      *
-     * @param user the username of the repository owner
-     * @param repo the name of the repository
-     * @param branch the name of the branch
+     * @param userName the user name of the repository owner
+     * @param repoName the name of the repository
+     * @param branchName the name of the branch
      * @return a GithubBranch object representing the branch, or null if the branch does not exist
      */
-    public GithubBranch branch(String user, String repo, String branch) {
+    public GithubBranch branch(String userName, String repoName, String branchName) {
         HTTPResponse r = http
-                .GET(Github.API.derive("repos/" + user + "/" + repo + "/branches/" + branch))
+                .GET(Github.API.derive("repos/" + userName + "/" + repoName + "/branches/" + branchName))
                 .send();
         if (r.getStatus() != HTTPResponseStatus.OK) return null;
         
         JSONObject json = r.getBody()
                 .get(HTTPBodyParser.JSON_OBJECT);
         
-        return new GithubBranch(this, user, repo, json);
+        return new GithubBranch(this, userName, repoName, json);
     }
     
     /**
      * Retrieves a list of branches in a GitHub repository.
      *
-     * @param user the username of the repository owner
-     * @param repo the name of the repository
+     * @param userName the user name of the repository owner
+     * @param repoName the name of the repository
      * @return a list of GithubBranch objects representing the branches in the repository
      */
-    public List<GithubBranch> branches(String user, String repo) {
+    public List<GithubBranch> branches(String userName, String repoName) {
         HTTPResponse r = http
-                .GET(Github.API.derive("repos/" + user + "/" + repo + "/branches"))
+                .GET(Github.API.derive("repos/" + userName + "/" + repoName + "/branches"))
                 .send();
         if (r.getStatus() != HTTPResponseStatus.OK) return null;
         
@@ -141,7 +141,7 @@ public class Github {
         
         List<GithubBranch> list = new ArrayList<>(json.size());
         for (int i = 0; i < json.size(); i++) {
-            list.add(new GithubBranch(this, user, repo, json.getObject(i)));
+            list.add(new GithubBranch(this, userName, repoName, json.getObject(i)));
         }
         return list;
     }
@@ -149,42 +149,42 @@ public class Github {
     /**
      * Retrieves information about a file in a GitHub repository.
      *
-     * @param user the username of the repository owner
-     * @param repo the name of the repository
-     * @param branch the name of the branch (can be null)
-     * @param path the path to the file
+     * @param userName the user name of the repository owner
+     * @param repoName the name of the repository
+     * @param branchName the name of the branch (can be null)
+     * @param filePath the path to the file
      * @return a GithubFile object representing the file, or null if the file does not exist
      */
-    public GithubFile file(String user, String repo, String branch, String path) {
-        branch = branch != null ? "?ref=" + branch : "";
-        path = path == null ? "" : path;
+    public GithubFile file(String userName, String repoName, String branchName, String filePath) {
+    	branchName = branchName != null ? "?ref=" + branchName : "";
+    	filePath = filePath == null ? "" : filePath;
         
         HTTPResponse r = http
-                .GET(Github.API.derive("repos/" + user + "/" + repo + "/contents/" + path + branch))
+                .GET(Github.API.derive("repos/" + userName + "/" + repoName + "/contents/" + filePath + branchName))
                 .send();
         if (r.getStatus() != HTTPResponseStatus.OK) return null;
         
         JSONObject json = r.getBody()
                 .get(HTTPBodyParser.JSON_OBJECT);
         
-        return new GithubFile(this, user, repo, branch, json);
+        return new GithubFile(this, userName, repoName, branchName, json);
     }
     
     /**
      * Retrieves a list of files in a directory in a GitHub repository.
      *
-     * @param user the username of the repository owner
-     * @param repo the name of the repository
-     * @param branch the name of the branch (can be null)
-     * @param path the path to the directory
+     * @param userName the user name of the repository owner
+     * @param repoName the name of the repository
+     * @param branchName the name of the branch (can be null)
+     * @param dirPath the path to the directory
      * @return a list of GithubFile objects representing the files in the directory
      */
-    public List<GithubFile> files(String user, String repo, String branch, String path) {
-        branch = branch != null ? "?ref=" + branch : "";
-        path = path == null ? "" : path;
+    public List<GithubFile> files(String userName, String repoName, String branchName, String dirPath) {
+    	branchName = branchName != null ? "?ref=" + branchName : "";
+    	dirPath = dirPath == null ? "" : dirPath;
         
         HTTPResponse r = http
-                .GET(Github.API.derive("repos/" + user + "/" + repo + "/contents/" + path + branch))
+                .GET(Github.API.derive("repos/" + userName + "/" + repoName + "/contents/" + dirPath + branchName))
                 .send();
         if (r.getStatus() != HTTPResponseStatus.OK) return null;
         
@@ -193,7 +193,7 @@ public class Github {
         
         List<GithubFile> list = new ArrayList<>(json.size());
         for (int i = 0; i < json.size(); i++) {
-            list.add(new GithubFile(this, user, repo, branch, json.getObject(i)));
+            list.add(new GithubFile(this, userName, repoName, branchName, json.getObject(i)));
         }
         return list;
     }

@@ -10,71 +10,72 @@ import fluff.json.JSONObject;
 public class GithubBranch {
     
     private final Github gh;
-    private final String user;
-    private final String repo;
     
-    private final String name;
+    private final String userName;
+    private final String repoName;
+    private final String branchName;
     
     /**
      * Constructs a GithubBranch instance from a JSONObject.
      *
      * @param gh the Github client instance
-     * @param user the username or organization name that owns the repository
-     * @param repo the repository name
+     * @param userName the user name that owns the repository
+     * @param repoName the repository name
      * @param json the JSON object containing branch information
      */
-    GithubBranch(Github gh, String user, String repo, JSONObject json) {
+    GithubBranch(Github gh, String userName, String repoName, JSONObject json) {
         this.gh = gh;
-        this.user = user;
-        this.repo = repo;
         
-        this.name = json.getString("name");
+        this.userName = userName;
+        this.repoName = repoName;
+        
+        this.branchName = json.getString("name");
     }
     
     /**
      * Retrieves a specific file in the branch.
      *
-     * @param path the path to the file
+     * @param filePath the path to the file
      * @return a GithubFile object representing the file, or null if it does not exist
      */
-    public GithubFile file(String path) {
-        return gh.file(user, repo, name, path);
+    public GithubFile file(String filePath) {
+        return gh.file(userName, repoName, branchName, filePath);
     }
     
     /**
-     * Retrieves all files in the specified path of the branch.
+     * Retrieves all files in the specified dir path of the branch.
      *
-     * @param path the path to the files
+     * @param dirPath the path to the directory
      * @return a list of GithubFile objects representing the files
      */
-    public List<GithubFile> files(String path) {
-        return gh.files(user, repo, name, path);
+    public List<GithubFile> files(String dirPath) {
+        return gh.files(userName, repoName, branchName, dirPath);
     }
     
     /**
-     * Returns the username or organization name that owns the repository.
+     * Returns the name of the user.
      *
-     * @return the username or organization name
+     * @return the user's name
      */
-    public String getUser() {
-        return user;
+    public String getUserName() {
+        return userName;
     }
     
     /**
-     * Returns the repository name.
+     * Returns the name of the repository.
      *
-     * @return the repository name
+     * @return the repository's name
      */
-    public String getRepo() {
-        return repo;
+    public String getRepoName() {
+        return repoName;
     }
     
     /**
-     * Returns the name of the branch.
+     * Returns the name of the repository branch.
      *
-     * @return the branch name
+     * @return the repository's branch name
      */
-    public String getName() {
-        return name;
+    public String getBranchName() {
+        return branchName;
     }
 }
