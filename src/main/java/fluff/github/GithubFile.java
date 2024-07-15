@@ -2,7 +2,7 @@ package fluff.github;
 
 import java.util.List;
 
-import fluff.http.response.HTTPResponse;
+import fluff.http.path.URLPath;
 import fluff.json.JSONObject;
 
 /**
@@ -49,15 +49,6 @@ public class GithubFile {
     }
     
     /**
-     * Sends an HTTP GET request to download the file.
-     *
-     * @return the HTTP response
-     */
-    public HTTPResponse GET() {
-        return gh.http.GET(downloadUrl).send();
-    }
-    
-    /**
      * Retrieves a specific file within the directory of this file.
      *
      * @param subPath the sub path to the file relative to this file's path
@@ -75,6 +66,15 @@ public class GithubFile {
      */
     public List<GithubFile> files(String subPath) {
         return gh.files(userName, repoName, branchName, filePath + "/" + subPath);
+    }
+    
+    /**
+     * Retrieves the raw content of this file.
+     *
+     * @return a GithubRawFile object representing the raw content of the file
+     */
+    public GithubRawFile rawFile() {
+    	return new GithubRawFile(gh, URLPath.of(downloadUrl));
     }
     
     /**
